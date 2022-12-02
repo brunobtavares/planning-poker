@@ -1,1 +1,22 @@
-<app-poker-card></app-poker-card>
+<div>
+    <div class="other-players">
+        <single-card [revealCardEvent]="revealCard"></single-card>
+        <single-card [revealCardEvent]="revealCard"></single-card>
+        <single-card [revealCardEvent]="revealCard"></single-card>
+        <single-card [revealCardEvent]="revealCard"></single-card>
+        <single-card [revealCardEvent]="revealCard"></single-card>
+        <single-card [revealCardEvent]="revealCard"></single-card>
+        <single-card [revealCardEvent]="revealCard"></single-card>
+        <single-card [revealCardEvent]="revealCard"></single-card>
+        <single-card [revealCardEvent]="revealCard"></single-card>
+        <single-card [revealCardEvent]="revealCard"></single-card>
+        <single-card [revealCardEvent]="revealCard"></single-card>
+    </div>
+    <div class="current-player">
+        <app-poker-card></app-poker-card>
+    </div>
+</div>
+
+<br><br>
+<button (click)="revealCard.emit(true)">Virar</button>
+<button (click)="revealCard.emit(false)">Desvirar</button>

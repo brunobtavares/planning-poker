@@ -1,24 +1,25 @@
 .cards{
-  -webkit-user-select: none; /* Safari */
-  -ms-user-select: none; /* IE 10 and IE 11 */
-  user-select: none; /* Standard syntax */
+  -webkit-user-select: none; 
+  -ms-user-select: none; 
+  user-select: none; 
 
   position: absolute;
-  left:50%;
-  margin-left:-100px;
+  left:46%;
   bottom:120px;
   height:200px;
+  background-color: brown;  
   .card{
     cursor: pointer;
     position:absolute;
     transform: translateZ(0);
     transform-origin:50% 200%;
     transition: all .35s ease-in;
-    // width:150px;    
-    // height:230px;    
-    // border:solid 1px #dfdfdf;
-    // border-radius: 10px;
-    // background:#fff;
+  }
+
+  .hide-card{
+    background-image: url('/assets/img/card-back-black.png');
+    background-size: 150px 230px;
+    background-repeat: no-repeat;
   }
 
   .active{
@@ -56,9 +57,6 @@
   height:230px;
   border: 1px solid #b4b4b4;
   border-radius: 5%;
-  // position: absolute;
-  // width: 180px;
-  // height: 250px;
 }
 
 .spade {
@@ -139,7 +137,7 @@
   color: red;
 }
 
-/* Letter in corner */
+
 .corner-detail::before {
   content: attr(data-content);
   position: absolute;
@@ -159,7 +157,7 @@
   clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
 }
 
-/* Stalk of small spade and club */
+
 .spade .corner-detail::after, 
 .club .corner-detail::after {
   content: '';
@@ -173,7 +171,7 @@
   border-bottom: 10px solid black;
 }
 
-/* Left circle of small spade/club */
+
 .spade-small, .club-small {
   position: absolute;
   top: 45px;
@@ -184,7 +182,7 @@
   background: black;
 }
 
-/* Right circle of small spade/club */
+
 .spade-small::before,
 .club-small::before {
   content: '';
@@ -196,7 +194,7 @@
   background: black;
 }
 
-/* Point of small spade */
+
 .spade-small::after {
   content: '';
   position: absolute;
@@ -208,7 +206,7 @@
   transform: rotate(45deg);
 }
 
-/* Top of club */
+
 .club-small::after {
   content: '';
   position: absolute;
@@ -220,7 +218,7 @@
   border-radius: 50%;
 }
 
-/* Left circle of heart */
+
 .heart-small {
   position: absolute;
   top: 40px;
@@ -231,7 +229,7 @@
   background: red;
 }
 
-/* Right cirle of heart */
+
 .heart-small::before {
   content: '';
   position: absolute;
@@ -242,7 +240,7 @@
   background: red;
 }
 
-/* Point of heart */
+
 .heart-small::after {
   content: '';
   position: absolute;
