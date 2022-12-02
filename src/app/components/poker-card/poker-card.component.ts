@@ -42,20 +42,17 @@ export class PokerCardComponent implements OnInit {
       let randomPos = Math.floor(Math.random() * this.cardTypes.length);
       this.randomCardTypes.push(this.cardTypes[randomPos]);
     });
-    console.log(this.randomCardTypes);
   }
 
   onCardSelect(event: any) {
     if (event == this.cardSelected.value) {
       this.cardSelected = {};
-      console.log(this.cardSelected, 1);
       return;
     }
 
     this.cardSelected = {
       value: event
     }
-    console.log(this.cardSelected, 2);
   }
 
 }
