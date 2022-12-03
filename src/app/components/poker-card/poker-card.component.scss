@@ -17,7 +17,7 @@
   }
 
   .hide-card{
-    background-image: url('/assets/img/card-back-black.png');
+    background-image: var(--back-card-url);
     background-size: 150px 230px;
     background-repeat: no-repeat;
   }

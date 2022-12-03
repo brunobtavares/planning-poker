@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "planning-poker-bbt": {
+      "hosting": {
+        "bt-planning-poker": [
+          "planning-poker-bbt"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "planning-poker-bbt"
+  }
+}

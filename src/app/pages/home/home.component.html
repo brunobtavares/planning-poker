@@ -1,16 +1,10 @@
 <div>
-    <div class="other-players">
-        <single-card [revealCardEvent]="revealCard"></single-card>
-        <single-card [revealCardEvent]="revealCard"></single-card>
-        <single-card [revealCardEvent]="revealCard"></single-card>
-        <single-card [revealCardEvent]="revealCard"></single-card>
-        <single-card [revealCardEvent]="revealCard"></single-card>
-        <single-card [revealCardEvent]="revealCard"></single-card>
-        <single-card [revealCardEvent]="revealCard"></single-card>
-        <single-card [revealCardEvent]="revealCard"></single-card>
-        <single-card [revealCardEvent]="revealCard"></single-card>
-        <single-card [revealCardEvent]="revealCard"></single-card>
-        <single-card [revealCardEvent]="revealCard"></single-card>
+    <div class="grid-container">
+        <ng-container *ngFor="let i of items">
+            <div class="grid-item">
+                <single-card [revealCardEvent]="revealCard"></single-card>
+            </div>
+        </ng-container>
     </div>
     <div class="current-player">
         <app-poker-card></app-poker-card>
@@ -20,3 +14,13 @@
 <br><br>
 <button (click)="revealCard.emit(true)">Virar</button>
 <button (click)="revealCard.emit(false)">Desvirar</button>
+<br><br>
+<button (click)="items.push('')">Add Player</button>
+<button (click)="items.shift()">Remove Player</button>
+<br><br>
+<button (click)="addCard()">ADD CARD</button>
+
+<br><br>
+<label for="room-name">Nome da sala</label>
+<input type="text" name="" id="room-name">
+<button (click)="tryEnterRoom()">ENTRAR</button>

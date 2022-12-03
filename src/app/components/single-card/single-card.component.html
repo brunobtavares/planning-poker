@@ -1,19 +1,29 @@
-<div class="cards">
-  <div class="card">
-    <div class="playing-card spade" [ngClass]="{'hide-card': !revealCard}">
-      <ng-container *ngIf="revealCard">
-        <div class="corner-detail" [attr.data-content]="1">
-          <div class="spade-small">
+<div class="flip-card" [ngClass]="{'active-flip-card' : revealCard}">
+  <div class="flip-card-inner">
+    <div class="flip-card-front">
+      <div class="cards">
+        <div class="card">
+          <div class="playing-card spade hide-card"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flip-card-back">
+      <div class="cards">
+        <div class="card">
+          <div class="playing-card spade">
+            <div class="corner-detail" [attr.data-content]="1">
+              <div class="spade-small"></div>
+            </div>
+            <div class="spade-main">
+              <div class="stalk"></div>
+            </div>
+            <div class="corner-detail bottom">
+              <div class="spade-small"></div>
+            </div>
           </div>
         </div>
-        <div class="spade-main">
-          <div class="stalk"></div>
-        </div>
-        <div class="corner-detail bottom">
-          <div class="spade-small">
-          </div>
-        </div>
-      </ng-container>
+      </div>
     </div>
   </div>
 </div>
