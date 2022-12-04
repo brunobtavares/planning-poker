@@ -6,7 +6,7 @@ import { IRoom } from './../interfaces/IRoom';
 @Injectable({
   providedIn: 'root'
 })
-export class FirestoreServiceService {
+export class FirestoreService {
 
   private mainCollectionName = 'rooms';
 
@@ -15,12 +15,17 @@ export class FirestoreServiceService {
   ) { }
 
   newRoom(data: IRoom) {
+    data.name = data.name.toLocaleLowerCase();
     this.firestore.collection(this.mainCollectionName).doc().set(data);
   }
 
   getRoom(roomName: string): Observable<IRoom> {
-    return this.firestore.collection(this.mainCollectionName, ref => ref.where('name', '==', roomName))
+    return this.firestore.collection<IRoom>(this.mainCollectionName, ref => ref.where('name', '==', roomName))
       .valueChanges()
       .pipe(map((val: any) => val.length > 0 ? val[0] : null));
+  }
+
+  getAllRooms(): Observable<IRoom[]> {
+    return this.firestore.collection<IRoom>(this.mainCollectionName).valueChanges();
   }
 }

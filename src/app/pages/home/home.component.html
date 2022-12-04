@@ -1,26 +1,32 @@
-<div>
-    <div class="grid-container">
-        <ng-container *ngFor="let i of items">
-            <div class="grid-item">
-                <single-card [revealCardEvent]="revealCard"></single-card>
-            </div>
-        </ng-container>
-    </div>
-    <div class="current-player">
-        <app-poker-card></app-poker-card>
-    </div>
-</div>
+<ng-container *ngIf="this.userData.user; else setUserName">
+    <div>
+        <h1>Salas</h1>
+        <ul>
+            <ng-container *ngFor="let room of rooms">
+                <li style="cursor: pointer;" [routerLink]="['room/' + room]">
+                    <h3>{{ room | titlecase }}</h3>
+                </li>
+            </ng-container>
+        </ul>
 
-<br><br>
-<button (click)="revealCard.emit(true)">Virar</button>
-<button (click)="revealCard.emit(false)">Desvirar</button>
-<br><br>
-<button (click)="items.push('')">Add Player</button>
-<button (click)="items.shift()">Remove Player</button>
-<br><br>
-<button (click)="addCard()">ADD CARD</button>
+        <br>
+        <hr>
+        <br>
 
-<br><br>
-<label for="room-name">Nome da sala</label>
-<input type="text" name="" id="room-name">
-<button (click)="tryEnterRoom()">ENTRAR</button>
+        <div>
+            <label for="new-room">Nova sala</label>
+            <br>
+            <input type="text" name="" id="new-room">
+            <button (click)="createNewRoom()">Criar</button>
+        </div>
+    </div>
+</ng-container>
+
+<ng-template #setUserName>
+    <div>
+        <label for="user-name">Informe um nome de usuário</label>
+        <br>
+        <input type="text" name="" id="user-name">
+        <button (click)="saveUserName()">Salvar</button>
+    </div>
+</ng-template>

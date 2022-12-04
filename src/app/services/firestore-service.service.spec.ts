@@ -1,16 +1,16 @@
 /* tslint:disable:no-unused-variable */
 
 import { TestBed, async, inject } from '@angular/core/testing';
-import { FirestoreServiceService } from './firestore-service.service';
+import { FirestoreService } from './firestore-service.service';
 
 describe('Service: FirestoreService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [FirestoreServiceService]
+      providers: [FirestoreService]
     });
   });
 
-  it('should ...', inject([FirestoreServiceService], (service: FirestoreServiceService) => {
+  it('should ...', inject([FirestoreService], (service: FirestoreService) => {
     expect(service).toBeTruthy();
   }));
 });
