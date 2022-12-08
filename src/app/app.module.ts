@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { PointReactComponent } from './components/point-react/point-react.component';
 import { PokerCardComponent } from './components/poker-card/poker-card.component';
 import { SingleCardComponent } from './components/single-card/single-card.component';
 import { HomeComponent } from './pages/home/home.component';
@@ -22,7 +23,8 @@ import { LoadingComponent } from './components/loading/loading.component';
     RoomComponent,
     PokerCardComponent,
     SingleCardComponent,
-    LoadingComponent
+    LoadingComponent,
+    PointReactComponent
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebaseConfig),

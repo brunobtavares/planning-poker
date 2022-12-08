@@ -1,0 +1,14 @@
+.average {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+}
+
+.current-player {
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    bottom: 0px;
+    left: 46%;
+}

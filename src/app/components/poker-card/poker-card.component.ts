@@ -20,7 +20,7 @@ export class PokerCardComponent implements OnInit {
 
   @Input() cardValues = [
     '0',
-    '½',
+    // '½',
     '1',
     '2',
     '3',

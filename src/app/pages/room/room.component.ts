@@ -9,7 +9,7 @@ import { LocaStorageService } from './../../services/loca-storage-service.servic
 @Component({
   selector: 'app-room',
   templateUrl: './room.component.html',
-  styleUrls: ['./room.component.css'],
+  styleUrls: ['./room.component.scss'],
   animations: [
     trigger('Fading', [
       state('void', style({ opacity: 0 })),
@@ -29,6 +29,8 @@ export class RoomComponent implements OnInit, OnDestroy {
   users: IUser[] = [];
 
   revealCard: EventEmitter<boolean> = new EventEmitter<boolean>();
+  reveal: boolean = false;
+  average: number = 0;
 
 
   constructor(
@@ -51,25 +53,29 @@ export class RoomComponent implements OnInit, OnDestroy {
     let room = await this.firestoreService.getRoomAsync(this.roomName)
     this.user = this.locaStorageService.get('user-data') as IUser;
 
-    if (room == null) {
-      this.router.navigate(['home']);
+    if (room == null || !this.user.name) {
+      this.router.navigate(['/']);
       return;
-    }
+    }    
     else if (room.users.findIndex(u => u.name == this.user?.name) < 0) {
       await this.firestoreService.AddUserAsync(this.roomName, this.user);
     }
+
+    this.revealCard.subscribe(event => {
+      this.reveal = event;
+    });
 
     this.roomChanges = this.firestoreService.listenRoomChanges(this.roomName)
       .subscribe({
         next: (room) => {
 
           for (const user of room.users) {
-            if (user.name != this.user?.name) {
 
-              if (room.users.length - 1 < this.users.length) {
-                this.users = this.users.filter(u => room.users.map(u => u.name).includes(u.name));
-              }
+            if (room.users.length - 1 < this.users.length) {
+              this.users = this.users.filter(u => room.users.map(u => u.name).includes(u.name));
+            }
 
+            if (user.name != this.user?.name) {              
               let userFound = this.users.find(u => u.name == user.name);
 
               if (userFound) {
@@ -79,6 +85,17 @@ export class RoomComponent implements OnInit, OnDestroy {
               }
             }
           }
+
+          let sum = 0;
+          room.users.forEach(user => {
+            if (isNaN(Number(user.selectedCard))) {
+              sum += 0.5;
+            } else {
+              sum += Number(user.selectedCard);
+            }
+          });
+          this.average = Math.trunc(sum / room.users.length);
+
           this.revealCard.emit(room.revealCards);
         }
       });
