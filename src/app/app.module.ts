@@ -8,6 +8,7 @@ import { RoomComponent } from './pages/room/room.component';
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { AngularFireStorageModule } from '@angular/fire/compat/storage';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { environment } from 'src/environments/environment';
 import { AppRoutingModule } from './app-routing.module';
@@ -27,6 +28,7 @@ import { LoadingComponent } from './components/loading/loading.component';
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFirestoreModule.enablePersistence(),
     AngularFireStorageModule,
+    BrowserAnimationsModule,
     BrowserModule,
     AppRoutingModule
   ],

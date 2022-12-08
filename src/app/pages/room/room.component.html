@@ -5,11 +5,11 @@
 <ng-template #showRoom>
     <div>
         <div class="grid-container">
-            <ng-container *ngFor="let u of users">
+            <div *ngFor="let u of users" @Fading>
                 <div class="grid-item">
                     <single-card [revealCardEvent]="revealCard" [user]="u"></single-card>
                 </div>
-            </ng-container>
+            </div>
         </div>
         <div class="current-player">
             <app-poker-card [roomName]="roomName" [user]="user"></app-poker-card>
@@ -18,6 +18,6 @@
 
     <br><br>
     <button (click)="revealCards()">Virar</button>
-    <button (click)="hideCards()">Desvirar</button>   
-    
+    <button (click)="hideCards()">Desvirar</button>
+
 </ng-template>

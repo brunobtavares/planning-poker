@@ -1,3 +1,4 @@
+import { trigger, transition, style, animate, state } from '@angular/animations';
 import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -8,7 +9,15 @@ import { LocaStorageService } from './../../services/loca-storage-service.servic
 @Component({
   selector: 'app-room',
   templateUrl: './room.component.html',
-  styleUrls: ['./room.component.css']
+  styleUrls: ['./room.component.css'],
+  animations: [
+    trigger('Fading', [
+      state('void', style({ opacity: 0 })),
+      state('*', style({ opacity: 1 })),
+      transition(':enter', animate('800ms ease-out')),
+      transition(':leave', animate('800ms ease-in')),
+    ])
+  ]
 })
 export class RoomComponent implements OnInit, OnDestroy {
 
@@ -56,6 +65,11 @@ export class RoomComponent implements OnInit, OnDestroy {
 
           for (const user of room.users) {
             if (user.name != this.user?.name) {
+
+              if (room.users.length - 1 < this.users.length) {
+                this.users = this.users.filter(u => room.users.map(u => u.name).includes(u.name));
+              }
+
               let userFound = this.users.find(u => u.name == user.name);
 
               if (userFound) {
