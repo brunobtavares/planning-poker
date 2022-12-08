@@ -1,6 +1,6 @@
-import { ILocalStorage } from './../interfaces/ILocalStorage';
-import { JsonPipe } from '@angular/common';
 import { Injectable } from '@angular/core';
+
+type keys = 'user-data';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +13,7 @@ export class LocaStorageService {
     this.storage = window.localStorage;
   }
 
-  set(key: string, value: any): boolean {
+  set(key: keys, value: any): boolean {
     if (this.storage) {
       this.storage.setItem(key, JSON.stringify(value));
       return true;
@@ -21,15 +21,15 @@ export class LocaStorageService {
     return false;
   }
 
-  get(key: string): any {
+  get(key: keys): any {
     if (this.storage) {
-      let item = this.storage.getItem(key) || JSON.stringify({} as ILocalStorage);
+      let item = this.storage.getItem(key) || JSON.stringify({});
       return JSON.parse(item);
     }
     return null;
   }
 
-  remove(key: string): boolean {
+  remove(key: keys): boolean {
     if (this.storage) {
       this.storage.removeItem(key);
       return true;

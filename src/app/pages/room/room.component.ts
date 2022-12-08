@@ -1,27 +1,32 @@
+import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { FirestoreService } from 'src/app/services/firestore-service.service';
-import { Component, EventEmitter, OnInit } from '@angular/core';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { catchError, finalize, throwError } from 'rxjs';
+import { IUser } from './../../interfaces/IUser';
+import { LocaStorageService } from './../../services/loca-storage-service.service';
 
 @Component({
   selector: 'app-room',
   templateUrl: './room.component.html',
   styleUrls: ['./room.component.css']
 })
-export class RoomComponent implements OnInit {
+export class RoomComponent implements OnInit, OnDestroy {
+
+  roomChanges: Subscription = new Subscription();
 
   loading: boolean = true;
   roomName: string = '';
+  user?: IUser;
+  users: IUser[] = [];
 
   revealCard: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-  //TODO
-  items: string[] = []
 
   constructor(
     private router: Router,
     private activatedroute: ActivatedRoute,
-    private firestoreService: FirestoreService
+    private firestoreService: FirestoreService,
+    private locaStorageService: LocaStorageService
   ) { }
 
   ngOnInit() {
@@ -29,40 +34,55 @@ export class RoomComponent implements OnInit {
     this.checkIfRoomExists();
   }
 
-  checkIfRoomExists() {
-    this.firestoreService.getRoom(this.roomName)
-      .pipe(finalize(() => (this.loading = false)))
-      .subscribe((room) => {
-        if (room == null) {
-          this.router.navigate(['home']);
-        }
-      }).unsubscribe();
+  ngOnDestroy() {
+    this.handleUserExiting();
   }
 
-  addCard() {
-    // this.firestore.collection('cards').doc('123').set({ card: 'gravando o primeiro card rs' });
-    // this.firestoreService.getRoom('teste').subscribe((data) => console.log(data));
-  }
+  async checkIfRoomExists() {
+    let room = await this.firestoreService.getRoomAsync(this.roomName)
+    this.user = this.locaStorageService.get('user-data') as IUser;
 
-  tryEnterRoom() {
-    let inputValue = document.getElementById('room-name') as any;
+    if (room == null) {
+      this.router.navigate(['home']);
+      return;
+    }
+    else if (room.users.findIndex(u => u.name == this.user?.name) < 0) {
+      await this.firestoreService.AddUserAsync(this.roomName, this.user);
+    }
 
-    this.firestoreService.getRoom('teste')
-      .subscribe((data) => {
-        if (data == null) {
+    this.roomChanges = this.firestoreService.listenRoomChanges(this.roomName)
+      .subscribe({
+        next: (room) => {
 
+          for (const user of room.users) {
+            if (user.name != this.user?.name) {
+              let userFound = this.users.find(u => u.name == user.name);
 
-
+              if (userFound) {
+                userFound.selectedCard = user.selectedCard;
+              } else {
+                this.users.push(user);
+              }
+            }
+          }
+          this.revealCard.emit(room.revealCards);
         }
       });
 
-    this.firestoreService.newRoom({
-      name: inputValue.value,
-      revealCards: false,
-      users: [
-        { name: 'Exemplo-1', selectedCard: '3' },
-        { name: 'Exemplo-2', selectedCard: '2' }
-      ]
-    });
+    this.loading = false;
+  }
+
+  async handleUserExiting() {
+    let user = this.locaStorageService.get('user-data') as IUser;
+    this.roomChanges.unsubscribe();
+    await this.firestoreService.removeUserAsync(this.roomName, user.name);
+  }
+
+  revealCards() {
+    this.firestoreService.revealCardAsync(this.roomName, true);
+  }
+
+  hideCards() {
+    this.firestoreService.revealCardAsync(this.roomName, false);
   }
 }
