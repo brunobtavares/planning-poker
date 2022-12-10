@@ -21,7 +21,5 @@ export class SingleCardComponent implements OnInit, OnDestroy {
     this.revealCardEvent.subscribe(event => this.revealCard = event);
   }
 
-  ngOnDestroy() {
-    //this.revealCardEvent.unsubscribe();
-  }
+  ngOnDestroy() { }
 }

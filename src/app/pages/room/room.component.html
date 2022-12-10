@@ -16,20 +16,18 @@
                 <span style="font-size: 2rem;">{{ average }}</span>
 
             </div>
-            <div style="width:100vw; display: flex; justify-content: center;">                
+            <div style="width:100vw; display: flex; justify-content: center;">
                 <app-point-react [value]="average"></app-point-react>
             </div>
         </div>
         <div class="current-player">
-            <div style="position: relative;">
+            <div>
                 <app-poker-card [roomName]="roomName" [user]="user"></app-poker-card>
             </div>
-            <div>
-                <br><br>
-                <button (click)="revealCards()">Virar</button>
-                <button (click)="hideCards()">Desvirar</button>
-                <br><br>
-            </div>
+        </div>
+        <div style="position: fixed; bottom: 0; margin-left: 20px;">
+            <button (click)="revealCards()">Virar</button>
+            <button (click)="hideCards()">Desvirar</button>
         </div>
     </div>
 </ng-template>

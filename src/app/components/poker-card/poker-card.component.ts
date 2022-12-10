@@ -1,11 +1,7 @@
-import { IUser } from './../../interfaces/IUser';
 import { Component, Input, OnInit } from '@angular/core';
+import { ICard } from 'src/app/interfaces/ICard';
 import { FirestoreService } from 'src/app/services/firestore-service.service';
-
-interface ICard {
-  value?: string;
-  cardType?: string;
-}
+import { IUser } from './../../interfaces/IUser';
 
 @Component({
   selector: 'app-poker-card',
@@ -14,8 +10,6 @@ interface ICard {
 })
 export class PokerCardComponent implements OnInit {
 
-  cardTypes: string[] = ['club', 'diamond', 'heart', 'spade'];
-  randomCardTypes: string[] = [];
   cardSelected: ICard = {};
 
   @Input() cardValues = [
@@ -39,16 +33,7 @@ export class PokerCardComponent implements OnInit {
     private firestoreService: FirestoreService
   ) { }
 
-  ngOnInit() {
-    this.generateRandomCardTypes();
-  }
-
-  generateRandomCardTypes() {
-    this.cardValues.forEach(v => {
-      let randomPos = Math.floor(Math.random() * this.cardTypes.length);
-      this.randomCardTypes.push(this.cardTypes[randomPos]);
-    });
-  }
+  ngOnInit() { }
 
   onCardSelect(event: any) {
     if (event == this.cardSelected.value) {
@@ -56,9 +41,7 @@ export class PokerCardComponent implements OnInit {
       return;
     }
 
-    this.cardSelected = {
-      value: event
-    }
+    this.cardSelected = { value: event };
 
     this.user!.selectedCard = event;
     this.firestoreService.updateUserAsync(this.roomName!, this.user!);

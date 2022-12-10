@@ -56,7 +56,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     if (room == null || !this.user.name) {
       this.router.navigate(['/']);
       return;
-    }    
+    }
     else if (room.users.findIndex(u => u.name == this.user?.name) < 0) {
       await this.firestoreService.AddUserAsync(this.roomName, this.user);
     }
@@ -75,7 +75,7 @@ export class RoomComponent implements OnInit, OnDestroy {
               this.users = this.users.filter(u => room.users.map(u => u.name).includes(u.name));
             }
 
-            if (user.name != this.user?.name) {              
+            if (user.name != this.user?.name) {
               let userFound = this.users.find(u => u.name == user.name);
 
               if (userFound) {
@@ -87,13 +87,7 @@ export class RoomComponent implements OnInit, OnDestroy {
           }
 
           let sum = 0;
-          room.users.forEach(user => {
-            if (isNaN(Number(user.selectedCard))) {
-              sum += 0.5;
-            } else {
-              sum += Number(user.selectedCard);
-            }
-          });
+          room.users.forEach(user => sum += Number(user.selectedCard));
           this.average = Math.trunc(sum / room.users.length);
 
           this.revealCard.emit(room.revealCards);
