@@ -52,7 +52,8 @@ export class HomeComponent implements OnInit, OnDestroy {
         users: [
           {
             name: userData.name || '',
-            selectedCard: '0'
+            selectedCard: '',
+            isSpectator: true
           }
         ]
       })
@@ -71,9 +72,17 @@ export class HomeComponent implements OnInit, OnDestroy {
 
         this.userData = {
           name: userName,
-          selectedCard: '0'
+          selectedCard: '',
+          isSpectator: true
         }
         this.localStorage.set('user-data', this.userData);
       });
+  }
+
+  enterRoom(roomName: string, isSpectator: boolean) {
+    this.userData!.isSpectator = isSpectator;
+    this.localStorage.set('user-data', this.userData);
+
+    this.router.navigate([`room/${roomName}`]);
   }
 }

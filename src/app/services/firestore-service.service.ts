@@ -159,6 +159,32 @@ export class FirestoreService {
     return await firstValueFrom(response);
   }
 
+  async resetCardAsync(roomName: string) {
+    let response = this.firestore.collection<IRoom>(this.mainCollectionName)
+      .get()
+      .pipe(map((snapShot) => {
+        let docs = snapShot.docs;
+        let result: boolean = false;
+
+        docs.forEach(async doc => {
+          let roomId = doc.id;
+          let room = doc.data();
+
+          if (roomName == room.name) {
+            
+            room.revealCards = false;
+            room.users.forEach(u => u.selectedCard = "");
+
+            await this.updateRoomByIdAsync(roomId, room);
+            result = true;
+          }
+        });
+        return result;
+      }));
+
+    return await firstValueFrom(response);
+  }
+
   getAllRooms(): Observable<IRoom[]> {
     return this.firestore.collection<IRoom>(this.mainCollectionName).valueChanges();
   }

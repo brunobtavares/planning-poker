@@ -3,8 +3,12 @@
         <h1>Salas</h1>
         <ul>
             <ng-container *ngFor="let room of rooms">
-                <li style="cursor: pointer;" [routerLink]="['room/' + room]">
-                    <h3>{{ room | titlecase }}</h3>
+                <li>
+                    <div style="display:flex;width:100%;gap:4px">
+                        <h3>{{ room | titlecase }}</h3>
+                        <button style="cursor: pointer;" (click)="enterRoom(room, false)">Entrar como jogador</button>
+                        <button style="cursor: pointer;" (click)="enterRoom(room, true)">Entrar como espectador</button>
+                    </div>
                 </li>
             </ng-container>
         </ul>

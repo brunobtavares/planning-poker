@@ -6,7 +6,7 @@
     <div class="flip-card-front">
       <div class="cards">
         <div class="card">
-          <div class="playing-card spade hide-card"></div>
+          <div class="playing-card spade hide-card" [ngClass]="{'low-opacity' : user.selectedCard == ''}"></div>
         </div>
       </div>
     </div>

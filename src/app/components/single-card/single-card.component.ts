@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, EventEmitter, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, OnDestroy, ɵɵsetComponentScope } from '@angular/core';
 import { IUser } from './../../interfaces/IUser';
 @Component({
   selector: 'single-card',
@@ -10,7 +10,8 @@ export class SingleCardComponent implements OnInit, OnDestroy {
   @Input() revealCardEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Input() user: IUser = {
     name: '',
-    selectedCard: '0'
+    selectedCard: '',
+    isSpectator: true
   };
 
   revealCard: boolean = false;

@@ -1,5 +1,5 @@
 import { trigger, transition, style, animate, state } from '@angular/animations';
-import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { FirestoreService } from 'src/app/services/firestore-service.service';
@@ -27,6 +27,8 @@ export class RoomComponent implements OnInit, OnDestroy {
   roomName: string = '';
   user?: IUser;
   users: IUser[] = [];
+  spactatorCount: Number = 0;
+  playerCount: Number = 0;
 
   revealCard: EventEmitter<boolean> = new EventEmitter<boolean>();
   reveal: boolean = false;
@@ -50,7 +52,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   async checkIfRoomExists() {
-    let room = await this.firestoreService.getRoomAsync(this.roomName)
+    let room = await this.firestoreService.getRoomAsync(this.roomName);
     this.user = this.locaStorageService.get('user-data') as IUser;
 
     if (room == null || !this.user.name) {
@@ -61,9 +63,7 @@ export class RoomComponent implements OnInit, OnDestroy {
       await this.firestoreService.AddUserAsync(this.roomName, this.user);
     }
 
-    this.revealCard.subscribe(event => {
-      this.reveal = event;
-    });
+    this.revealCard.subscribe(event => { this.reveal = event; });
 
     this.roomChanges = this.firestoreService.listenRoomChanges(this.roomName)
       .subscribe({
@@ -87,8 +87,17 @@ export class RoomComponent implements OnInit, OnDestroy {
           }
 
           let sum = 0;
-          room.users.forEach(user => sum += Number(user.selectedCard));
-          this.average = Math.trunc(sum / room.users.length);
+          let userAvaliableCount = 0;
+          room.users.forEach(user => {
+            if (!user.isSpectator && !isNaN(Number(user.selectedCard))) {
+              sum += Number(user.selectedCard)
+              userAvaliableCount++;
+            }
+          });
+          this.average = Math.trunc(sum / userAvaliableCount);
+
+          this.spactatorCount = room.users.filter(u => u.isSpectator).length;
+          this.playerCount = room.users.filter(u => !u.isSpectator).length;
 
           this.revealCard.emit(room.revealCards);
         }
@@ -109,5 +118,22 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   hideCards() {
     this.firestoreService.revealCardAsync(this.roomName, false);
+  }
+
+  resetCards() {
+    this.firestoreService.resetCardAsync(this.roomName);
+  }
+
+  filterPlayers() {
+    return this.users.filter(u => !u.isSpectator);
+  }
+
+  filterSpactators() {
+    return this.users.filter(u => u.isSpectator);
+  }
+
+  @HostListener('window:beforeunload', ['$event'])
+  beforeunloadHandler(event: any) {
+    alert('Vai sair');
   }
 }

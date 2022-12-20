@@ -5,7 +5,7 @@
 <ng-template #showRoom>
     <div>
         <div class="grid-container">
-            <div *ngFor="let u of users" @Fading>
+            <div *ngFor="let u of filterPlayers()" @Fading>
                 <div class="grid-item">
                     <single-card [revealCardEvent]="revealCard" [user]="u"></single-card>
                 </div>
@@ -20,14 +20,27 @@
                 <app-point-react [value]="average"></app-point-react>
             </div>
         </div>
-        <div class="current-player">
+        <div class="current-player" *ngIf="!user?.isSpectator">
             <div>
-                <app-poker-card [roomName]="roomName" [user]="user"></app-poker-card>
+                <app-poker-card [roomName]="roomName"></app-poker-card>
             </div>
         </div>
-        <div style="position: fixed; bottom: 0; margin-left: 20px;">
-            <button (click)="revealCards()">Virar</button>
-            <button (click)="hideCards()">Desvirar</button>
+        <div>
+            <div style="margin-left: 20px;" *ngIf="filterSpactators().length  > 0">
+                <h4>Espectadores</h4>
+                <ul>
+                    <li *ngFor="let s of filterSpactators()">{{ s.name }}</li>
+                </ul>
+            </div>
+            <div style="position: fixed; bottom: 5px; margin-left: 20px;">
+                <div>{{ spactatorCount }} {{ spactatorCount > 1 ? 'Espectadores' : 'Espectador'}}</div>
+                <div>{{ playerCount }} {{ playerCount > 1 ? 'Jogadores' : 'Jogador'}}</div>
+                <div style="margin-top: 10px;" *ngIf="!user?.isSpectator">
+                    <button (click)="revealCards()">Virar</button>
+                    <button (click)="hideCards()">Desvirar</button>
+                    <button (click)="resetCards()">Revotar</button>
+                </div>
+            </div>
         </div>
     </div>
 </ng-template>

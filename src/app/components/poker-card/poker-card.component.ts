@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ICard } from 'src/app/interfaces/ICard';
 import { FirestoreService } from 'src/app/services/firestore-service.service';
+import { LocaStorageService } from 'src/app/services/loca-storage-service.service';
 import { IUser } from './../../interfaces/IUser';
 
 @Component({
@@ -14,36 +15,36 @@ export class PokerCardComponent implements OnInit {
 
   @Input() cardValues = [
     '0',
-    // '½',
     '1',
     '2',
     '3',
     '5',
     '8',
-    '9',
-    '20',
-    '40',
-    '100'
+    '13',
+    '21',
+    '34',
+    '55'
   ];
 
   @Input() roomName?: string;
-  @Input() user?: IUser;
+  user?: IUser;
 
   constructor(
-    private firestoreService: FirestoreService
+    private firestoreService: FirestoreService,
+    private locaStorageService: LocaStorageService
   ) { }
 
   ngOnInit() { }
 
   onCardSelect(event: any) {
-    if (event == this.cardSelected.value) {
-      this.cardSelected = {};
-      return;
-    }
 
-    this.cardSelected = { value: event };
+    this.user = this.locaStorageService.get('user-data') as IUser;
 
-    this.user!.selectedCard = event;
+    this.cardSelected = {
+      value: event == this.cardSelected.value ? '' : event
+    };
+
+    this.user!.selectedCard = this.cardSelected.value!;
     this.firestoreService.updateUserAsync(this.roomName!, this.user!);
   }
 
