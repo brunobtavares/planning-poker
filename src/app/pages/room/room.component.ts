@@ -132,8 +132,31 @@ export class RoomComponent implements OnInit, OnDestroy {
     return this.users.filter(u => u.isSpectator);
   }
 
+  alterName() {
+    var inputText = document.getElementById('newName') as HTMLInputElement;
+
+    console.log(this.users);
+
+    if (inputText.value) {
+      if (this.users.findIndex(u => u.name == inputText.value) < 0) {
+        let user = this.locaStorageService.get('user-data') as IUser;
+        user.name = inputText.value;
+
+        this.user = user;
+
+        this.locaStorageService.set('user-data', user);
+        this.firestoreService.updateUserAsync(this.roomName, user);
+
+        inputText.value = '';
+      } else {
+        alert('Não foi possível renomear');
+      }
+    }
+  }
+
   @HostListener('window:beforeunload', ['$event'])
   beforeunloadHandler(event: any) {
-    alert('Vai sair');
+    // alert('Vai sair');
+    console.log('User is out');
   }
 }
