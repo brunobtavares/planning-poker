@@ -1,6 +1,7 @@
-import { trigger, transition, style, animate, state } from '@angular/animations';
-import { Component, EventEmitter, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Hotkey, HotkeysService } from 'angular2-hotkeys';
 import { Subscription } from 'rxjs';
 import { FirestoreService } from 'src/app/services/firestore-service.service';
 import { IUser } from './../../interfaces/IUser';
@@ -31,6 +32,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   playerCount: Number = 0;
 
   revealCard: EventEmitter<boolean> = new EventEmitter<boolean>();
+  enableRemoveUser: EventEmitter<boolean> = new EventEmitter<boolean>();
   reveal: boolean = false;
   average: number = 0;
 
@@ -39,8 +41,14 @@ export class RoomComponent implements OnInit, OnDestroy {
     private router: Router,
     private activatedroute: ActivatedRoute,
     private firestoreService: FirestoreService,
-    private locaStorageService: LocaStorageService
-  ) { }
+    private locaStorageService: LocaStorageService,
+    private hotkeysService: HotkeysService
+  ) {
+    this.hotkeysService.add(new Hotkey('alt+shift+k', (event: KeyboardEvent): boolean => {
+      this.enableRemoveUser.emit(true);
+      return false;
+    }));
+  }
 
   ngOnInit() {
     this.roomName = this.activatedroute.snapshot.paramMap.get("roomName")!;
@@ -48,7 +56,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.handleUserExiting();
+    //this.handleUserExiting();
   }
 
   async checkIfRoomExists() {
@@ -69,12 +77,15 @@ export class RoomComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (room) => {
 
+          if (room.users.findIndex(u => u.name == this.user?.name) < 0) {
+            alert('Você foi removido da sala');
+            this.router.navigate(['/']);
+            return;
+          }
+
+          this.users = this.users.filter(u => room.users.map(u => u.name).includes(u.name));
+
           for (const user of room.users) {
-
-            if (room.users.length - 1 < this.users.length) {
-              this.users = this.users.filter(u => room.users.map(u => u.name).includes(u.name));
-            }
-
             if (user.name != this.user?.name) {
               let userFound = this.users.find(u => u.name == user.name);
 
@@ -152,11 +163,5 @@ export class RoomComponent implements OnInit, OnDestroy {
         alert('Não foi possível renomear');
       }
     }
-  }
-
-  @HostListener('window:beforeunload', ['$event'])
-  beforeunloadHandler(event: any) {
-    // alert('Vai sair');
-    console.log('User is out');
   }
 }

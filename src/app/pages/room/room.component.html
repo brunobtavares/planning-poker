@@ -7,7 +7,8 @@
         <div class="grid-container">
             <div *ngFor="let u of filterPlayers()" @Fading>
                 <div class="grid-item">
-                    <single-card [revealCardEvent]="revealCard" [user]="u"></single-card>
+                    <single-card [enableRemoveUser]="enableRemoveUser" [roomName]="roomName"
+                        [revealCardEvent]="revealCard" [user]="u"></single-card>
                 </div>
             </div>
         </div>
@@ -22,7 +23,7 @@
         </div>
         <div class="current-player" *ngIf="!user?.isSpectator">
             <div>
-                <app-poker-card [roomName]="roomName"></app-poker-card>
+                <app-poker-card [revealCardEvent]="revealCard" [roomName]="roomName"></app-poker-card>
             </div>
         </div>
         <div>
@@ -38,7 +39,7 @@
                 <div style="margin-top: 10px;" *ngIf="!user?.isSpectator">
                     <button (click)="revealCards()">Virar</button>
                     <button (click)="hideCards()">Desvirar</button>
-                    <button (click)="resetCards()">Revotar</button>
+                    <!-- <button (click)="resetCards()">Revotar</button> -->
                 </div>
             </div>
             <div style="position: fixed; bottom: 5px; margin-left: 85%;">

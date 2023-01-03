@@ -15,6 +15,7 @@ import { environment } from 'src/environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoadingComponent } from './components/loading/loading.component';
+import { HotkeyModule } from 'angular2-hotkeys';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { LoadingComponent } from './components/loading/loading.component';
     AngularFireStorageModule,
     BrowserAnimationsModule,
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    HotkeyModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]

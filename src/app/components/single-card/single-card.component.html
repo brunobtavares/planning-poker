@@ -1,7 +1,7 @@
 <div style="max-width: 150px; overflow-x: hidden;">
   <small>{{ user.name }}</small>
 </div>
-<div class="flip-card" [ngClass]="{'active-flip-card' : revealCard}">
+<div class="flip-card" [ngClass]="{'active-flip-card' : revealCard && user.selectedCard != ''}">
   <div class="flip-card-inner">
     <div class="flip-card-front">
       <div class="cards">
@@ -30,3 +30,4 @@
     </div>
   </div>
 </div>
+<small *ngIf="canRemoveUser" class="remove" (click)="removeUser()">Remover</small>

@@ -2,7 +2,7 @@
   .hide-card {
     background-image: var(--back-card-url);
     background-size: 150px 230px;
-    background-repeat: no-repeat;    
+    background-repeat: no-repeat;
   }
 
   .low-opacity {
@@ -261,3 +261,12 @@
   z-index: 1;
 }
 /*#endregion Flip Card*/
+
+.remove {
+  margin-top: 2px;
+  cursor: pointer;
+}
+
+.remove:hover {
+  color: red;
+}

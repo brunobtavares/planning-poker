@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit } from '@angular/core';
 import { ICard } from 'src/app/interfaces/ICard';
 import { FirestoreService } from 'src/app/services/firestore-service.service';
 import { LocaStorageService } from 'src/app/services/loca-storage-service.service';
@@ -25,19 +25,22 @@ export class PokerCardComponent implements OnInit {
     '34',
     '55'
   ];
+  @Input() revealCardEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   @Input() roomName?: string;
   user?: IUser;
+  revealCard: boolean = false;
 
   constructor(
     private firestoreService: FirestoreService,
     private locaStorageService: LocaStorageService
   ) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.revealCardEvent.subscribe(event => this.revealCard = event);
+  }
 
   onCardSelect(event: any) {
-
     this.user = this.locaStorageService.get('user-data') as IUser;
 
     this.cardSelected = {
@@ -45,6 +48,7 @@ export class PokerCardComponent implements OnInit {
     };
 
     this.user!.selectedCard = this.cardSelected.value!;
+    this.user!.selectedCard = Number(this.user!.selectedCard) > 55 ? '55' : this.user!.selectedCard;
     this.firestoreService.updateUserAsync(this.roomName!, this.user!);
   }
 
