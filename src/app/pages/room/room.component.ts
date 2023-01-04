@@ -1,5 +1,5 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Hotkey, HotkeysService } from 'angular2-hotkeys';
 import { Subscription } from 'rxjs';
@@ -118,9 +118,8 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   async handleUserExiting() {
-    let user = this.locaStorageService.get('user-data') as IUser;
     this.roomChanges.unsubscribe();
-    await this.firestoreService.removeUserAsync(this.roomName, user.name);
+    await this.firestoreService.removeUserAsync(this.roomName, this.user!.name);
   }
 
   revealCards() {
@@ -146,16 +145,14 @@ export class RoomComponent implements OnInit, OnDestroy {
   alterName() {
     var inputText = document.getElementById('newName') as HTMLInputElement;
 
-    console.log(this.users);
-
     if (inputText.value) {
       if (this.users.findIndex(u => u.name == inputText.value) < 0) {
         let user = this.locaStorageService.get('user-data') as IUser;
         user.name = inputText.value;
 
+        this.locaStorageService.set('user-data', user);
         this.user = user;
 
-        this.locaStorageService.set('user-data', user);
         this.firestoreService.updateUserAsync(this.roomName, user);
 
         inputText.value = '';
@@ -163,5 +160,13 @@ export class RoomComponent implements OnInit, OnDestroy {
         alert('Não foi possível renomear');
       }
     }
+  }
+
+  @HostListener('window:focus', ['$event'])
+  onFocus(event: FocusEvent): void {
+  }
+
+  @HostListener('window:blur', ['$event'])
+  onBlur(event: FocusEvent): void {
   }
 }

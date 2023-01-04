@@ -47,8 +47,9 @@ export class PokerCardComponent implements OnInit {
       value: event == this.cardSelected.value ? '' : event
     };
 
-    this.user!.selectedCard = this.cardSelected.value!;
-    this.user!.selectedCard = Number(this.user!.selectedCard) > 55 ? '55' : this.user!.selectedCard;
+    this.user!.selectedCard = this.cardSelected.value!;    
+    
+    this.locaStorageService.set('user-data', this.user!);
     this.firestoreService.updateUserAsync(this.roomName!, this.user!);
   }
 
