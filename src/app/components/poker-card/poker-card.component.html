@@ -1,6 +1,6 @@
 <div class="cards">
   <ng-container *ngFor="let card of cardValues; index as idx">
-    <div class="card" [ngClass]="{'active': cardSelected.value == card}" (click)="onCardSelect(card)">
+    <div class="card" [ngClass]="{'active': session.user?.selectedCard == card}" (click)="onCardSelect(card)">
       <div class="playing-card spade" [ngClass]="{'hide-card': false}">
         <ng-container *ngIf="true">
           <div class="corner-detail" [attr.data-content]="card">

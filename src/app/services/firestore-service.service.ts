@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, QuerySnapshot } from '@angular/fire/compat/firestore';
+import { Store } from '@ngrx/store';
 import { firstValueFrom, map, Observable } from 'rxjs';
 import { IUser } from '../interfaces/IUser';
+import { stateType } from '../reducer/session/session.actions';
 import { IRoom } from './../interfaces/IRoom';
 
 @Injectable({
@@ -11,9 +13,14 @@ export class FirestoreService {
 
   private mainCollectionName = 'rooms';
 
+  session: stateType = {};
+
   constructor(
-    private firestore: AngularFirestore
-  ) { }
+    private firestore: AngularFirestore,
+    private store: Store<{ session: stateType }>
+  ) {
+    store.select((store) => store.session).subscribe((response) => this.session = response);
+  }
 
   newRoom(data: IRoom) {
     data.name = data.name.toLocaleLowerCase();
@@ -85,7 +92,7 @@ export class FirestoreService {
           let roomId = doc.id;
           let room = doc.data();
 
-          if (roomName == room.name) {
+          if (roomName == room.name && userName != this.session.user?.name) {
             let userIdx = room.users.findIndex(u => u.name == userName);
             room.users.splice(userIdx, 1);
 
@@ -170,7 +177,7 @@ export class FirestoreService {
           let room = doc.data();
 
           if (roomName == room.name) {
-            
+
             room.revealCards = false;
             room.users.forEach(u => u.selectedCard = "");
 

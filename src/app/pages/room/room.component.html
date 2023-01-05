@@ -5,10 +5,11 @@
 <ng-template #showRoom>
     <div>
         <div class="grid-container">
-            <div *ngFor="let u of filterPlayers()" @Fading>
+            <div *ngFor="let remoteUser of filterPlayers(); trackBy: trackUser" @Fading>
+                <!-- <div *ngFor="let remoteUser of filterPlayers()"> -->
                 <div class="grid-item">
-                    <single-card [enableRemoveUser]="enableRemoveUser" [roomName]="roomName"
-                        [revealCardEvent]="revealCard" [user]="u"></single-card>
+                    <single-card [revealCardEvent]="revealCardEvent" [user]="remoteUser"
+                        [enableRemoveUser]="enableRemoveUser"></single-card>
                 </div>
             </div>
         </div>
@@ -17,13 +18,14 @@
                 <span style="font-size: 2rem;">{{ average }}</span>
 
             </div>
-            <div style="width:100vw; display: flex; justify-content: center;">
+            <!-- <div style="width:100vw; display: flex; justify-content: center;">
                 <app-point-react [value]="average"></app-point-react>
-            </div>
+            </div> -->
+
         </div>
-        <div class="current-player" *ngIf="!user?.isSpectator">
+        <div class="current-player" *ngIf="!session.user?.isSpectator">
             <div>
-                <app-poker-card [revealCardEvent]="revealCard" [roomName]="roomName"></app-poker-card>
+                <app-poker-card [revealCard]="reveal"></app-poker-card>
             </div>
         </div>
         <div>
@@ -40,14 +42,14 @@
             <div style="position: fixed; bottom: 5px; margin-left: 20px;">
                 <div>{{ spactatorCount }} {{ spactatorCount > 1 ? 'Espectadores' : 'Espectador'}}</div>
                 <div>{{ playerCount }} {{ playerCount > 1 ? 'Jogadores' : 'Jogador'}}</div>
-                <div style="margin-top: 10px;" *ngIf="!user?.isSpectator">
+                <div style="margin-top: 10px;" *ngIf="!session.user?.isSpectator">
                     <button (click)="revealCards()">Virar</button>
                     <button (click)="hideCards()">Desvirar</button>
                     <!-- <button (click)="resetCards()">Revotar</button> -->
                 </div>
             </div>
             <div style="position: fixed; bottom: 5px; margin-left: 85%;">
-                <label for="">Nome atual: {{ user?.name }}</label>
+                <label for="">Nome atual: {{ session.user?.name }}</label>
                 <input type="text" name="newName" id="newName" placeholder="Novo nome">
                 <button (click)="alterName()">Alterar nome</button>
             </div>

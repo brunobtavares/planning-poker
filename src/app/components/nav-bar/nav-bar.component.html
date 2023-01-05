@@ -19,8 +19,8 @@
           <a *ngIf="session.room" class="nav-link text-danger" href="javascript:void(0)">Sair</a>
         </div>
         <div class="navbar-text me-2">
-          <i *ngIf="session.theme == 'light'" (click)="changeTheme('dark')" class="fa-solid fa-moon"></i>
-          <i *ngIf="session.theme == 'dark'" (click)="changeTheme('light')" class="fa-solid fa-sun"></i>
+          <i *ngIf="session.theme == 'light'" (click)="changeTheme('dark')" class="fa-solid fa-moon cursor-pointer"></i>
+          <i *ngIf="session.theme == 'dark'" (click)="changeTheme('light')" class="fa-solid fa-sun cursor-pointer"></i>
         </div>
       </div>
     </div>

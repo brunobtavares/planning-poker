@@ -1,5 +1,8 @@
+import { setUser } from './../../reducer/session/session.actions';
 import { Component, EventEmitter, Input, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { ICard } from 'src/app/interfaces/ICard';
+import { stateType } from 'src/app/reducer/session/session.actions';
 import { FirestoreService } from 'src/app/services/firestore-service.service';
 import { LocaStorageService } from 'src/app/services/loca-storage-service.service';
 import { IUser } from './../../interfaces/IUser';
@@ -11,8 +14,7 @@ import { IUser } from './../../interfaces/IUser';
 })
 export class PokerCardComponent implements OnInit {
 
-  cardSelected: ICard = {};
-
+  @Input() revealCard: boolean = false;
   @Input() cardValues = [
     '0',
     '1',
@@ -25,32 +27,31 @@ export class PokerCardComponent implements OnInit {
     '34',
     '55'
   ];
-  @Input() revealCardEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-  @Input() roomName?: string;
-  user?: IUser;
-  revealCard: boolean = false;
+  // cardSelected: ICard = {};
+  session: stateType = {};
 
   constructor(
     private firestoreService: FirestoreService,
-    private locaStorageService: LocaStorageService
-  ) { }
+    private locaStorageService: LocaStorageService,
+    private store: Store<{ session: stateType }>
+  ) {
+    store.select((store) => store.session).subscribe((response) => this.session = response);
+  }
 
   ngOnInit() {
-    this.revealCardEvent.subscribe(event => this.revealCard = event);
   }
 
   onCardSelect(event: any) {
-    this.user = this.locaStorageService.get('session-key') as IUser;
+    let user = this.session.user;
 
-    this.cardSelected = {
-      value: event == this.cardSelected.value ? '' : event
+    user = {
+      ...this.session.user!,
+      selectedCard: event == user?.selectedCard ? '' : event
     };
 
-    this.user!.selectedCard = this.cardSelected.value!;    
-    
-    this.locaStorageService.set('session-key', this.user!);
-    this.firestoreService.updateUserAsync(this.roomName!, this.user!);
+    this.store.dispatch(setUser({ user: user }));
+    this.firestoreService.updateUserAsync(this.session.room?.name!, user!);
   }
 
 }

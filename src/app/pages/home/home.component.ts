@@ -14,18 +14,10 @@ import { stateType } from 'src/app/reducer/session/session.actions';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit, OnDestroy {
-
-  userData?: IUser = {
-    name: 'N/A',
-    selectedCard: '',
-    isSpectator: false
-  };
   rooms: string[] = [];
-  getAllRooms: Subscription = new Subscription();
+  roomsSubscription: Subscription = new Subscription();
 
-  session: stateType = {
-    theme: 'light'
-  };
+  session: stateType = { theme: 'light' };
 
   constructor(
     private router: Router,
@@ -37,42 +29,35 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.getAllRooms = this.firestoreService.getAllRooms().subscribe((data) => this.rooms = data.map(d => d.name));
-    this.userData = this.localStorage.get('session-key');
-    setTimeout(() => this.store.dispatch(setUser({ user: this.userData })), 0);
+    this.roomsSubscription = this.firestoreService.getAllRooms().subscribe((data) => this.rooms = data.map(d => d.name));
+    const user = this.localStorage.get('session-key');
+    setTimeout(() => this.store.dispatch(setUser({ user })), 0);
   }
 
   ngOnDestroy() {
-    this.getAllRooms.unsubscribe();
+    this.roomsSubscription.unsubscribe();
   }
 
   createNewRoom() {
-    let roomName: string = (document.getElementById('new-room') as any).value;
+    let roomNameInput = (document.getElementById('new-room') as HTMLInputElement);
 
-    if (this.rooms.includes(roomName.toLowerCase())) {
-      let dialogResult = confirm(`Uma sala com o nome ${roomName}, já existe. Deseja ser redirecionado?`);
+    if (this.rooms.includes(roomNameInput.value.toLowerCase())) {
+      let dialogResult = confirm(`Uma sala com o nome ${roomNameInput.value}, já existe. Deseja ser redirecionado?`);
 
       if (dialogResult) {
-        this.router.navigate([`room/${roomName}`]);
+        this.router.navigate([`room/${roomNameInput}`]);
       }
     }
     else {
-
-      let userData = this.localStorage.get('session-key') as IUser;
-
       this.firestoreService.newRoom({
-        name: roomName,
+        name: roomNameInput.value,
         revealCards: false,
         calc: 0,
-        users: [
-          {
-            name: userData.name || '',
-            selectedCard: '',
-            isSpectator: true
-          }
-        ]
+        users: []
       })
     }
+
+    roomNameInput.value = '';
   }
 
   saveUserName() {
@@ -85,19 +70,24 @@ export class HomeComponent implements OnInit, OnDestroy {
           return;
         };
 
-        this.userData = {
+        const user = {
           name: userName,
           selectedCard: '',
           isSpectator: true
         }
-        this.localStorage.set('session-key', this.userData);
-        this.store.dispatch(setUser({ user: this.userData }));
+
+        this.store.dispatch(setUser({ user: user }));
       });
   }
 
   enterRoom(roomName: string, isSpectator: boolean) {
-    this.userData = { ...this.userData!, isSpectator };
-    this.localStorage.set('session-key', this.userData);
+
+    const user: IUser = {
+      ...this.session.user!,
+      isSpectator
+    }
+
+    this.store.dispatch(setUser({ user }));
 
     this.router.navigate([`room/${roomName}`]);
   }
