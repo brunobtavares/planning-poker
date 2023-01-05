@@ -62,12 +62,12 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    //this.handleUserExiting();
+    this.handleUserExiting();
   }
 
   async checkIfRoomExists() {
     let room = await this.firestoreService.getRoomAsync(this.roomName);
-    this.user = this.locaStorageService.get('user-data') as IUser;
+    this.user = this.locaStorageService.get('session-key') as IUser;
 
     if (room == null || !this.user.name) {
       this.router.navigate(['/']);
@@ -155,10 +155,10 @@ export class RoomComponent implements OnInit, OnDestroy {
 
     if (inputText.value) {
       if (this.users.findIndex(u => u.name == inputText.value) < 0) {
-        let user = this.locaStorageService.get('user-data') as IUser;
+        let user = this.locaStorageService.get('session-key') as IUser;
         user.name = inputText.value.substring(0, 25);
 
-        this.locaStorageService.set('user-data', user);
+        this.locaStorageService.set('session-key', user);
         this.user = user;
 
         this.firestoreService.updateUserAsync(this.roomName, user);
@@ -167,6 +167,14 @@ export class RoomComponent implements OnInit, OnDestroy {
       } else {
         alert('Não foi possível renomear');
       }
+    }
+  }
+
+  removeUser(userName: string) {
+    var dialogResult = confirm(`Deseja remover o usuário ${userName}?`);
+
+    if (dialogResult) {
+      this.firestoreService.removeUserAsync(this.roomName, userName);
     }
   }
 

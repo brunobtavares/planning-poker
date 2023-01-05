@@ -14,6 +14,7 @@ export class CryptoService {
   }
 
   decryptAES(value: string) {
-    return crypto.AES.decrypt(value, environment.encryptKey);
+    const decrypted = crypto.AES.decrypt(value, environment.encryptKey);
+    return decrypted.toString(crypto.enc.Utf8);
   }
 }

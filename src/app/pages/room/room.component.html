@@ -30,7 +30,11 @@
             <div style="margin-left: 20px;" *ngIf="filterSpactators().length  > 0">
                 <h4>Espectadores</h4>
                 <ul>
-                    <li *ngFor="let s of filterSpactators()">{{ s.name }}</li>
+                    <li *ngFor="let s of filterSpactators()">
+                        <span>{{ s.name }}</span>
+                        <span *ngIf="enableRemoveUser | async" (click)="removeUser(s.name)"
+                            class="ms-2 text-danger cursor-pointer">x</span>
+                    </li>
                 </ul>
             </div>
             <div style="position: fixed; bottom: 5px; margin-left: 20px;">

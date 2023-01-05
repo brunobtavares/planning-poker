@@ -41,7 +41,7 @@ export class PokerCardComponent implements OnInit {
   }
 
   onCardSelect(event: any) {
-    this.user = this.locaStorageService.get('user-data') as IUser;
+    this.user = this.locaStorageService.get('session-key') as IUser;
 
     this.cardSelected = {
       value: event == this.cardSelected.value ? '' : event
@@ -49,7 +49,7 @@ export class PokerCardComponent implements OnInit {
 
     this.user!.selectedCard = this.cardSelected.value!;    
     
-    this.locaStorageService.set('user-data', this.user!);
+    this.locaStorageService.set('session-key', this.user!);
     this.firestoreService.updateUserAsync(this.roomName!, this.user!);
   }
 

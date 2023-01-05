@@ -38,7 +38,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.getAllRooms = this.firestoreService.getAllRooms().subscribe((data) => this.rooms = data.map(d => d.name));
-    this.userData = this.localStorage.get('user-data');
+    this.userData = this.localStorage.get('session-key');
     setTimeout(() => this.store.dispatch(setUser({ user: this.userData })), 0);
   }
 
@@ -58,7 +58,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
     else {
 
-      let userData = this.localStorage.get('user-data') as IUser;
+      let userData = this.localStorage.get('session-key') as IUser;
 
       this.firestoreService.newRoom({
         name: roomName,
@@ -90,14 +90,14 @@ export class HomeComponent implements OnInit, OnDestroy {
           selectedCard: '',
           isSpectator: true
         }
-        this.localStorage.set('user-data', this.userData);
+        this.localStorage.set('session-key', this.userData);
         this.store.dispatch(setUser({ user: this.userData }));
       });
   }
 
   enterRoom(roomName: string, isSpectator: boolean) {
     this.userData = { ...this.userData!, isSpectator };
-    this.localStorage.set('user-data', this.userData);
+    this.localStorage.set('session-key', this.userData);
 
     this.router.navigate([`room/${roomName}`]);
   }
