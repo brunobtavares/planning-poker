@@ -1,8 +1,11 @@
+import { setRoom } from './../../reducer/session/session.actions';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, EventEmitter, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { Hotkey, HotkeysService } from 'angular2-hotkeys';
 import { Subscription } from 'rxjs';
+import { stateType } from 'src/app/reducer/session/session.actions';
 import { FirestoreService } from 'src/app/services/firestore-service.service';
 import { IUser } from './../../interfaces/IUser';
 import { LocaStorageService } from './../../services/loca-storage-service.service';
@@ -42,12 +45,15 @@ export class RoomComponent implements OnInit, OnDestroy {
     private activatedroute: ActivatedRoute,
     private firestoreService: FirestoreService,
     private locaStorageService: LocaStorageService,
-    private hotkeysService: HotkeysService
+    private hotkeysService: HotkeysService,
+    private store: Store<{ session: stateType }>
   ) {
     this.hotkeysService.add(new Hotkey('alt+shift+k', (event: KeyboardEvent): boolean => {
       this.enableRemoveUser.emit(true);
       return false;
     }));
+
+    // store.select((store) => store.session).subscribe((response) => this.session = response);
   }
 
   ngOnInit() {
@@ -76,7 +82,9 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.roomChanges = this.firestoreService.listenRoomChanges(this.roomName)
       .subscribe({
         next: (room) => {
+          this.store.dispatch(setRoom({ room }));
 
+          //Check if user was removed
           if (room.users.findIndex(u => u.name == this.user?.name) < 0) {
             alert('Você foi removido da sala');
             this.router.navigate(['/']);
@@ -90,7 +98,7 @@ export class RoomComponent implements OnInit, OnDestroy {
               let userFound = this.users.find(u => u.name == user.name);
 
               if (userFound) {
-                userFound.selectedCard = user.selectedCard;
+                userFound = { ...userFound, selectedCard: user.selectedCard };
               } else {
                 this.users.push(user);
               }
@@ -148,7 +156,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     if (inputText.value) {
       if (this.users.findIndex(u => u.name == inputText.value) < 0) {
         let user = this.locaStorageService.get('user-data') as IUser;
-        user.name = inputText.value;
+        user.name = inputText.value.substring(0, 25);
 
         this.locaStorageService.set('user-data', user);
         this.user = user;

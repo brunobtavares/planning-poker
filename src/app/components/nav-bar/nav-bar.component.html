@@ -1,0 +1,28 @@
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <span class="navbar-brand">Olá, {{ session.user?.name ?? 'N/A' }}</span>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText"
+      aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarText">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <!-- <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Features</a>
+        </li>  -->
+      </ul>
+      <div class="d-flex">
+        <div class="navbar-text me-4">
+          <a *ngIf="session.room" class="nav-link text-danger" href="javascript:void(0)">Sair</a>
+        </div>
+        <div class="navbar-text me-2">
+          <i *ngIf="session.theme == 'light'" (click)="changeTheme('dark')" class="fa-solid fa-moon"></i>
+          <i *ngIf="session.theme == 'dark'" (click)="changeTheme('light')" class="fa-solid fa-sun"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>

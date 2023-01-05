@@ -11,11 +11,14 @@ import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { AngularFireStorageModule } from '@angular/fire/compat/storage';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+import { HotkeyModule } from 'angular2-hotkeys';
 import { environment } from 'src/environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoadingComponent } from './components/loading/loading.component';
-import { HotkeyModule } from 'angular2-hotkeys';
+import { NavBarComponent } from './components/nav-bar/nav-bar.component';
+import { sessionReducer } from './reducer/session/session.reducer';
+import { StoreModule } from '@ngrx/store';
 
 @NgModule({
   declarations: [
@@ -25,7 +28,8 @@ import { HotkeyModule } from 'angular2-hotkeys';
     PokerCardComponent,
     SingleCardComponent,
     LoadingComponent,
-    PointReactComponent
+    PointReactComponent,
+    NavBarComponent
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebaseConfig),
@@ -34,7 +38,8 @@ import { HotkeyModule } from 'angular2-hotkeys';
     BrowserAnimationsModule,
     BrowserModule,
     AppRoutingModule,
-    HotkeyModule.forRoot()
+    HotkeyModule.forRoot(),
+    StoreModule.forRoot({ session: sessionReducer })
   ],
   providers: [],
   bootstrap: [AppComponent]

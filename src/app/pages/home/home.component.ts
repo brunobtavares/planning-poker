@@ -1,9 +1,12 @@
+import { setUser } from './../../reducer/session/session.actions';
 import { IUser } from './../../interfaces/IUser';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { FirestoreService } from 'src/app/services/firestore-service.service';
 import { LocaStorageService } from 'src/app/services/loca-storage-service.service';
+import { Store } from '@ngrx/store';
+import { stateType } from 'src/app/reducer/session/session.actions';
 
 @Component({
   selector: 'app-home',
@@ -12,19 +15,31 @@ import { LocaStorageService } from 'src/app/services/loca-storage-service.servic
 })
 export class HomeComponent implements OnInit, OnDestroy {
 
-  userData?: IUser;
+  userData?: IUser = {
+    name: 'N/A',
+    selectedCard: '',
+    isSpectator: false
+  };
   rooms: string[] = [];
   getAllRooms: Subscription = new Subscription();
+
+  session: stateType = {
+    theme: 'light'
+  };
 
   constructor(
     private router: Router,
     private localStorage: LocaStorageService,
-    private firestoreService: FirestoreService
-  ) { }
+    private firestoreService: FirestoreService,
+    private store: Store<{ session: stateType }>
+  ) {
+    store.select((store) => store.session).subscribe((response) => this.session = response);
+  }
 
   ngOnInit() {
     this.getAllRooms = this.firestoreService.getAllRooms().subscribe((data) => this.rooms = data.map(d => d.name));
     this.userData = this.localStorage.get('user-data');
+    setTimeout(() => this.store.dispatch(setUser({ user: this.userData })), 0);
   }
 
   ngOnDestroy() {
@@ -76,11 +91,12 @@ export class HomeComponent implements OnInit, OnDestroy {
           isSpectator: true
         }
         this.localStorage.set('user-data', this.userData);
+        this.store.dispatch(setUser({ user: this.userData }));
       });
   }
 
   enterRoom(roomName: string, isSpectator: boolean) {
-    this.userData!.isSpectator = isSpectator;
+    this.userData = { ...this.userData!, isSpectator };
     this.localStorage.set('user-data', this.userData);
 
     this.router.navigate([`room/${roomName}`]);

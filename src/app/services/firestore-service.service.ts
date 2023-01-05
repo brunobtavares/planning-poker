@@ -38,7 +38,6 @@ export class FirestoreService {
         docs.forEach(doc => {
           let room = doc.data();
           room.users.forEach(user => {
-            console.log(user);
             if (!result) result = user.name == userName;
           });
         });

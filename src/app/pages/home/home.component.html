@@ -1,36 +1,38 @@
 <ng-container *ngIf="this.userData?.name; else setUserName">
-    <div>
-        <h1>Salas</h1>
-        <ul>
-            <ng-container *ngFor="let room of rooms">
-                <li>
-                    <div style="display:flex;width:100%;gap:4px">
-                        <h3>{{ room | titlecase }}</h3>
-                        <button style="cursor: pointer;" (click)="enterRoom(room, false)">Entrar como jogador</button>
-                        <button style="cursor: pointer;" (click)="enterRoom(room, true)">Entrar como espectador</button>
-                    </div>
-                </li>
-            </ng-container>
-        </ul>
-
-        <br>
-        <hr>
-        <br>
-
-        <div>
-            <label for="new-room">Nova sala</label>
-            <br>
-            <input type="text" name="" id="new-room">
-            <button (click)="createNewRoom()">Criar</button>
+    <div class="d-flex justify-content-center mt-5">
+        <div class="card" style="min-width: 20rem;">
+            <div class="card-header">
+                <b>Salas</b>
+            </div>
+            <ul class="list-group list-group-flush">
+                <ng-container *ngFor="let room of rooms">
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-between">
+                            <span>{{ room | titlecase }}</span>
+                            <div class="d-flex">
+                                <i class="fa-solid fa-right-to-bracket d-flex align-items-center cursor-pointer me-3"
+                                    (click)="enterRoom(room, false)" title="Entrar"></i>
+                                <i class="fa-solid fa-eye d-flex align-items-center cursor-pointer"
+                                    (click)="enterRoom(room, true)" title="Assitir"></i>
+                            </div>
+                        </div>
+                    </li>
+                </ng-container>
+            </ul>
         </div>
     </div>
 </ng-container>
 
 <ng-template #setUserName>
-    <div>
-        <label for="user-name">Informe um nome de usuário</label>
-        <br>
-        <input type="text" name="" id="user-name">
-        <button (click)="saveUserName()">Salvar</button>
+    <div class="d-flex justify-content-center mt-5">
+        <div style="width: 20rem;">
+            <div>
+                <label for="user-name" class="form-label">Informe um nome de usuário</label>
+                <input class="form-control" type="text" maxlength="25" id="user-name">
+            </div>
+            <div class="d-flex justify-content-end">
+                <button class="btn btn-primary btn-sm mt-2" (click)="saveUserName()">Salvar</button>
+            </div>
+        </div>
     </div>
 </ng-template>
