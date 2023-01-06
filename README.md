@@ -1,2 +1,1 @@
-# Planning Poker
-![Acessar](https://brunobtavares.github.io/planning-poker/)
+# Planning Poker [Acessar](https://brunobtavares.github.io/planning-poker/)
