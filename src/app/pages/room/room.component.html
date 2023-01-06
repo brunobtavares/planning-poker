@@ -6,8 +6,7 @@
     <div>
         <div class="grid-container">
             <div *ngFor="let remoteUser of filterPlayers(); trackBy: trackUser" @Fading>
-                <!-- <div *ngFor="let remoteUser of filterPlayers()"> -->
-                <div class="grid-item">
+                <div class="grid-item" *ngIf="remoteUser.name != session.user?.name && remoteUser.name != nameBefore">
                     <single-card [revealCardEvent]="revealCardEvent" [user]="remoteUser"
                         [enableRemoveUser]="enableRemoveUser"></single-card>
                 </div>

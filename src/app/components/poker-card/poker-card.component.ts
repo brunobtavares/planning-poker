@@ -42,7 +42,7 @@ export class PokerCardComponent implements OnInit {
   ngOnInit() {
   }
 
-  onCardSelect(event: any) {
+  async onCardSelect(event: any) {
     let user = this.session.user;
 
     user = {
@@ -50,8 +50,8 @@ export class PokerCardComponent implements OnInit {
       selectedCard: event == user?.selectedCard ? '' : event
     };
 
-    this.store.dispatch(setUser({ user: user }));
-    this.firestoreService.updateUserAsync(this.session.room?.name!, user!);
+    this.store.dispatch(setUser({ user }));
+    await this.firestoreService.updateUserAsync(this.session.room?.name!, user!);
   }
 
 }

@@ -33,11 +33,11 @@ export class SingleCardComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() { }
 
-  removeUser() {
+  async removeUser() {
     var dialogResult = confirm(`Deseja remover o usuário ${this.user.name}?`);
 
     if (dialogResult && this.session.room?.name) {
-      this.firestoreService.removeUserAsync(this.session.room.name, this.user.name);
+      await this.firestoreService.removeUserAsync(this.session.room.name, this.user.name);
     }
   }
 }

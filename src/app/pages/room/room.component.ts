@@ -32,7 +32,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   loading: boolean = true;
   roomName: string = '';
-  users: IUser[] = [];
+  remoteUsers: IUser[] = [];
   spactatorCount: Number = 0;
   playerCount: Number = 0;
   reveal: boolean = false;
@@ -57,14 +57,14 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.roomName = this.activatedroute.snapshot.paramMap.get("roomName")!;
-    this.checkIfRoomExists();
+    this.validateRoom();
   }
 
   ngOnDestroy() {
     this.handleUserExiting();
   }
 
-  async checkIfRoomExists() {
+  async validateRoom() {
     let room = await this.firestoreService.getRoomAsync(this.roomName);
 
     this.store.dispatch(setUser({ user: this.locaStorageService.get('session-key') }));
@@ -85,33 +85,18 @@ export class RoomComponent implements OnInit, OnDestroy {
         next: (room) => {
           this.store.dispatch(setRoom({ room }));
 
-          //Check if user was removed
-          const isUserInRoom = room.users.findIndex(remoteUser => remoteUser.name == this.session.user?.name);
-          if (isUserInRoom < 0) {
-            alert('Você foi removido da sala');
+          this.remoteUsers = room.users;
+
+          if (this.remoteUsers.findIndex(rm => rm.name == this.session.user?.name) < 0) {
+            // alert('Você foi removido da sala!');
             this.router.navigate(['/']);
             return;
           }
 
-          //Remove user if it's not in room
-          const remoteUserNames = room.users.map(u => u.name);
-          this.users = this.users.filter(u => remoteUserNames.includes(u.name));
-
           let sum = 0;
           let userAvaliableCount = 0;
+
           for (const remoteUser of room.users) {
-            if (remoteUser.name != this.session.user?.name) {
-
-              let userIdx = this.users.findIndex(u => u.name == remoteUser.name);
-
-              if (userIdx < 0) {
-                this.users.push(remoteUser);
-              }
-              else {
-                this.users[userIdx] = remoteUser;
-              }
-            }
-
             if (!remoteUser.isSpectator && !isNaN(Number(remoteUser.selectedCard))) {
               sum += Number(remoteUser.selectedCard)
               userAvaliableCount++;
@@ -134,7 +119,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   async handleUserExiting() {
-    this.roomSubscription.unsubscribe();
+    //this.roomSubscription.unsubscribe();
     if (this.session.user?.name)
       await this.firestoreService.removeUserAsync(this.roomName, this.session.user.name);
   }
@@ -152,29 +137,29 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   filterPlayers() {
-    return this.users.filter(u => !u.isSpectator);
-    // return this.session.room?.users.filter(u => !u.isSpectator && u.name != this.session.user?.name) ?? [];
+    return this.remoteUsers.filter(u => !u.isSpectator);
   }
 
   filterSpactators() {
-    return this.users.filter(u => u.isSpectator);
-    // return this.session.room?.users.filter(u => u.isSpectator) ?? [];
+    return this.remoteUsers.filter(u => u.isSpectator);
   }
 
-  alterName() {
+  nameBefore: string = '';
+  async alterName() {
     var inputText = document.getElementById('newName') as HTMLInputElement;
 
     if (inputText.value) {
-      if (this.users.findIndex(u => u.name == inputText.value) < 0) {
+      if (this.remoteUsers.findIndex(u => u.name == inputText.value) < 0) {
         let user = this.session.user!;
+        this.nameBefore = this.session.user!.name;
+
         user = {
           ...this.session.user!,
           name: inputText.value.substring(0, 25)
         };
 
         this.store.dispatch(setUser({ user }));
-
-        this.firestoreService.updateUserAsync(this.roomName, user);
+        await this.firestoreService.updateUserNameAsync(this.roomName, this.nameBefore, user);
 
         inputText.value = '';
       } else {
@@ -183,11 +168,11 @@ export class RoomComponent implements OnInit, OnDestroy {
     }
   }
 
-  removeUser(userName: string) {
+  async removeUser(userName: string) {
     var dialogResult = confirm(`Deseja remover o usuário ${userName}?`);
 
     if (dialogResult) {
-      this.firestoreService.removeUserAsync(this.roomName, userName);
+      await this.firestoreService.removeUserAsync(this.roomName, userName);
     }
   }
 

@@ -16,7 +16,7 @@
       </ul>
       <div class="d-flex">
         <div class="navbar-text me-4">
-          <a *ngIf="session.room" class="nav-link text-danger" href="javascript:void(0)">Sair</a>
+          <a *ngIf="session.room" class="nav-link text-danger" href="javascript:void(0)" (click)="exitRoom()">Sair</a>
         </div>
         <div class="navbar-text me-2">
           <i *ngIf="session.theme == 'light'" (click)="changeTheme('dark')" class="fa-solid fa-moon cursor-pointer"></i>

@@ -24,13 +24,13 @@ export class FirestoreService {
 
   newRoom(data: IRoom) {
     data.name = data.name.toLocaleLowerCase();
-    this.firestore.collection(this.mainCollectionName).doc().set(data);
+    this.firestore.collection(this.mainCollectionName).doc(data.name).set(data);
   }
 
   async getRoomAsync(roomName: string): Promise<IRoom> {
-    let response = this.firestore.collection<IRoom>(this.mainCollectionName, ref => ref.where('name', '==', roomName))
-      .valueChanges()
-      .pipe(map((val: any) => val.length > 0 ? val[0] : null));
+    let response = this.firestore.collection<IRoom>(this.mainCollectionName).doc(roomName)
+      .get()
+      .pipe(map((room) => room.data() ?? {} as IRoom));
 
     return await firstValueFrom(response);
   }
@@ -54,88 +54,65 @@ export class FirestoreService {
   }
 
   async updateUserAsync(roomName: string, data: IUser): Promise<boolean> {
-    let response = this.firestore.collection<IRoom>(this.mainCollectionName)
-      .get()
-      .pipe(map((snapShot) => {
-        let docs = snapShot.docs;
-        let result: boolean = false;
+    var room = await this.getRoomAsync(roomName);
 
-        docs.forEach(async doc => {
-          let roomId = doc.id;
-          let room = doc.data();
+    let userIdx = room.users?.findIndex(user => user.name == data.name);
 
-          if (roomName == room.name) {
-            let userIdx = room.users.findIndex(u => u.name == data.name);
-            room.users.splice(userIdx, 1);
-            room.users.push(data);
+    if (userIdx >= 0) {
+      room.users[userIdx] = { ...data };
+      await this.updateRoomByIdAsync(roomName, room);
 
-            await this.updateRoomByIdAsync(roomId, room);
+      return true;
+    }
 
-            result = true;
-          }
-        });
+    return false;
+  }
 
-        return result;
-      }));
+  async updateUserNameAsync(roomName: string, lastName: string, data: IUser): Promise<boolean> {
+    var room = await this.getRoomAsync(roomName);
 
-    return await firstValueFrom(response);
+    let userIdx = room.users?.findIndex(user => user.name == lastName);
+    
+    if (userIdx >= 0) {
+      room.users[userIdx] = { ...data };
+      await this.updateRoomByIdAsync(roomName, room);
+
+      return true;
+    }
+
+    return false;
   }
 
   async removeUserAsync(roomName: string, userName: string): Promise<boolean> {
-    let response = this.firestore.collection<IRoom>(this.mainCollectionName)
-      .get()
-      .pipe(map((snapShot) => {
-        let docs = snapShot.docs;
-        let result: boolean = false;
+    const response = this.firestore.collection<IRoom>(this.mainCollectionName).doc(roomName);
+    const docs = await firstValueFrom(response.get());
+    var room = docs.data();
 
-        docs.forEach(async doc => {
-          let roomId = doc.id;
-          let room = doc.data();
+    if (room) {
+      let userIdx = room.users.findIndex(user => user.name == userName);
+      room.users.splice(userIdx, 1);
 
-          if (roomName == room.name && userName != this.session.user?.name) {
-            let userIdx = room.users.findIndex(u => u.name == userName);
-            room.users.splice(userIdx, 1);
+      await this.updateRoomByIdAsync(roomName, room);
 
-            await this.updateRoomByIdAsync(roomId, room);
+      return true;
+    }
 
-            result = true;
-          }
-        });
-
-        return result;
-      }));
-
-    return await firstValueFrom(response);
+    return false;
   }
 
   async AddUserAsync(roomName: string, user: IUser): Promise<boolean> {
-    let response = this.firestore.collection<IRoom>(this.mainCollectionName)
-      .get()
-      .pipe(map((snapShot) => {
-        let docs = snapShot.docs;
-        let result: boolean = false;
+    var room = await this.getRoomAsync(roomName);
 
-        docs.forEach(async doc => {
-          let roomId = doc.id;
-          let room = doc.data();
+    let userIdx = room.users.findIndex(u => u.name == user.name);
 
-          if (roomName == room.name) {
-            let userIdx = room.users.findIndex(u => u.name == user.name);
+    if (userIdx < 0) {
+      room.users.push(user);
+      await this.updateRoomByIdAsync(roomName, room);
 
-            if (userIdx >= 0) {
-              room.users.splice(userIdx, 1);
-            }
+      return true;
+    }
 
-            room.users.push(user);
-            await this.updateRoomByIdAsync(roomId, room);
-
-            result = true;
-          }
-        });
-        return result;
-      }));
-
-    return await firstValueFrom(response);
+    return false;
   }
 
   private async updateRoomByIdAsync(roomId: string, data: IRoom) {
@@ -197,13 +174,16 @@ export class FirestoreService {
 
   listenRoomChanges(roomName: string): Observable<IRoom> {
     return this.firestore.collection<IRoom>(this.mainCollectionName)
+      .doc(roomName)
       .valueChanges()
-      .pipe(map((rooms) => {
-        for (const room of rooms) {
-          if (room.name == roomName)
-            return room;
-        }
-        return {} as IRoom;
-      }));
+      .pipe(map((room) => room ?? {} as IRoom));
   }
+
+  // async getRoomAsync(roomName: string): Promise<IRoom> {
+  //   let response = this.firestore.collection<IRoom>(this.mainCollectionName, ref => ref.where('name', '==', roomName))
+  //     .valueChanges()
+  //     .pipe(map((val: any) => val.length > 0 ? val[0] : null));
+
+  //   return await firstValueFrom(response);
+  // }
 }
